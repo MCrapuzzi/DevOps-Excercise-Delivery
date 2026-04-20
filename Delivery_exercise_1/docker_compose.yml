@@ -1,0 +1,68 @@
+version: '3.8'
+services:
+  maria_db:
+    image: mariadb:11
+    container_name: maria_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - hits-exercise-network
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 20s
+      retries: 10
+      start_period: 30s
+  
+  nginx_server:
+     build: 
+        context: ./nginx/
+     container_name: nginx_server
+     ports:
+       - 80:80
+     volumes:
+         - ./html/:/var/www/html/
+     networks:
+      - hits-exercise-network
+     depends_on:
+      php_service:
+        condition: service_started
+      maria_db:
+        condition: service_healthy
+
+  php_service:
+     build: 
+        context: ./html/
+     container_name: php_service
+     expose:
+       - 9000
+     volumes:
+        - ./html/:/var/www/html/
+     networks:
+      - hits-exercise-network
+     depends_on:
+       maria_db:
+         condition: service_healthy
+     environment:
+       MYSQL_HOST: ${MYSQL_HOST}
+       MYSQL_DATABASE: ${MYSQL_DATABASE}
+       MYSQL_USER: ${MYSQL_USER}
+       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+volumes:
+  mariadb_data:
+    driver: local
+
+networks:
+  hits-exercise-network:
+    driver: bridge
+
