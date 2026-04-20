@@ -1,1 +1,3 @@
-Delivery_exercise_1/.env
+*.env
+Delivery_exercise_1/Appunti.txt
+JenkinsInstallation/JenkinsDockerRun.bat
