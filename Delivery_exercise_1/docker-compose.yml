@@ -24,12 +24,15 @@ services:
       start_period: 30s
   
   nginx_server:
-     build: 
-        context: ./nginx/
+     image: nginx:latest
      container_name: nginx_server
      ports:
        - 80:80
+       - 443:443
      volumes:
+         - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+         - ./certs/nginx.crt:/etc/ssl/nginx.crt
+         - ./certs/nginx.key:/etc/ssl/nginx.key
          - ./html/:/var/www/html/
      networks:
       - hits-exercise-network
@@ -40,8 +43,7 @@ services:
         condition: service_healthy
 
   php_service:
-     build: 
-        context: ./html/
+     image: php_single_page:latest
      container_name: php_service
      expose:
        - 9000
