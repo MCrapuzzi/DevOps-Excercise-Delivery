@@ -1,3 +1,4 @@
 *.env
+Ansible/*
 JenkinsInstallation/JenkinsDockerRun.bat
 Appunti.txt
