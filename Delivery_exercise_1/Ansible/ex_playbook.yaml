@@ -1,0 +1,44 @@
+---
+- name: Deploy DevOps Exercise
+  hosts: prod
+  vars_files:
+    - secrets.yaml
+  tasks:
+    - name: Check if Docker is installed
+      community.docker.docker_host_info:
+      register: docker_host_info_output
+    
+    - name: Show docker host info output
+      ansible.builtin.debug:
+        var: docker_host_info_output
+    
+    - name: Check if Git is installed
+      ansible.builtin.command: git --version
+      changed_when: false
+      register: git_version_output
+
+    - name: Show git version output
+      ansible.builtin.debug:
+        var: git_version_output
+
+    - name: Clone repo
+      ansible.builtin.git:
+        repo: 'https://github.com/MCrapuzzi/DevOps-Excercise-Delivery.git'
+        dest: /tmp/checkout
+        single_branch: yes
+        version: FeatureExercise1
+
+    - name: Generate .env file
+      ansible.builtin.template:
+        src: ./.env.j2
+        dest: /tmp/checkout/Delivery_exercise_1/.env
+        mode: '0600'
+
+    - name: Create and start services
+      community.docker.docker_compose_v2:
+        project_src: /tmp/checkout/Delivery_exercise_1
+      register: docker_compose_output
+
+    - name: Show docker compose output
+      ansible.builtin.debug:
+        var: docker_compose_output
