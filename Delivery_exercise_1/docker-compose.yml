@@ -27,6 +27,12 @@ services:
     image: michelecrapuzzi/php_service
     ports:
       - "80:80"
+    environment:
+       MYSQL_HOST: ${MYSQL_HOST}
+       MYSQL_DATABASE: ${MYSQL_DATABASE}
+       MYSQL_USER: ${MYSQL_USER}
+       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
     depends_on:
       - maria_db
 
