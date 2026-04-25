@@ -16,7 +16,7 @@ node {
         ])
         {
             image_name = "${DOCKER_USERNAME}/php_service:${imageTag}"
-            image_build = docker.build(image_name,"./Delivery_exercise_1/html/Dockerfile")
+            image_build = docker.build(image_name,"./Delivery_exercise_1/html")
         }
     }
 
