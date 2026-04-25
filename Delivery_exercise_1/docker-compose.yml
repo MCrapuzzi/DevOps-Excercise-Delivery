@@ -23,6 +23,13 @@ services:
       retries: 10
       start_period: 30s
   
+  php_service:
+    image: michelecrapuzzi/php_service
+    ports:
+      - "80:80"
+    depends_on:
+      - maria_db
+
   # nginx_server:
   #    image: nginx:latest
   #    container_name: nginx_server
@@ -59,12 +66,6 @@ services:
   #      MYSQL_DATABASE: ${MYSQL_DATABASE}
   #      MYSQL_USER: ${MYSQL_USER}
   #      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-  php_service:
-    image: michelecrapuzzi/php_service:22
-    ports:
-      - "80:80"
-    depends_on:
-      - maria_db
 
 volumes:
   mariadb_data:
