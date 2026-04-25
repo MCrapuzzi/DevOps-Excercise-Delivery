@@ -30,6 +30,7 @@ node {
     ]) {
         docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
             image_build.push()
+            image_build.push('latest')
         }
     }
 }
