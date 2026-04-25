@@ -1,0 +1,39 @@
+node {
+    def imageTag = "${env.BUILD_ID}"
+    def image_name
+    def image_build
+    try{
+    stage('Checkout') {
+        checkout scm
+    }
+
+    stage('Build') {
+        withCredentials([
+            usernamePassword(
+                credentialsId: 'docker-hub-credentials',
+                usernameVariable: 'DOCKER_USERNAME',
+                passwordVariable: 'DOCKER_PASSWORD')
+        ])
+        {
+            image_name = "${DOCKER_USERNAME}/php_service:${imageTag}"
+            image_build = docker.build(image_name,"./Delivery_exercise_1/html")
+        }
+    }
+
+    stage('Push') {
+    withCredentials([
+        usernamePassword(
+            credentialsId: 'docker-hub-credentials',
+            usernameVariable: 'DOCKER_USER',
+            passwordVariable: 'DOCKER_PASS'
+        )
+    ]) {
+        docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
+            image_build.push()
+            image_build.push('latest')
+        }
+    }
+}
+    }
+    catch(Exception e){currentBuild.result = 'FAILURE'}
+}
