@@ -1,12 +1,17 @@
 ---
-- name: Install Docker
-  hosts: proxmox
+- name: Install Docker on Proxmox hosts
+  hosts: all
   become: true
 
   tasks:
     - name: Update apt cache
       ansible.builtin.apt:
         update_cache: yes
+
+    - name: Install Python Docker SDK
+      ansible.builtin.package:
+        name: python3-docker
+        state: present
 
     - name: Ensure dependencies are installed
       ansible.builtin.package:
@@ -53,3 +58,6 @@
         name: user
         groups: docker
         append: yes
+
+    - name: Reset SSH connection to refresh user groups
+      meta: reset_connection

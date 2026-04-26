@@ -9,7 +9,7 @@ provider "proxmox" {
 }
 
 resource "proxmox_vm_qemu" "vm" {
-  count       = 1
+  count       = 3
   name        = "vm-${count.index}"
   target_node = var.target_node
   clone       = var.template_name

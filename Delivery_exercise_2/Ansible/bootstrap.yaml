@@ -1,0 +1,2 @@
+- import_playbook: setup_playbook.yaml
+- import_playbook: swarm_initialize.yaml
