@@ -1,0 +1,26 @@
+- name: Initialize Docker Swarm on manager node
+  hosts: swarm_manager
+  become: true
+  tasks:
+    - name: Initialize swarm
+      community.docker.docker_swarm:
+        state: present
+        advertise_addr: "{{ ansible_host }}"
+      register: swarm_init
+
+    - name: Save swarm tokens
+      ansible.builtin.set_fact:
+        swarm_manager_token: "{{ swarm_init.swarm_facts.JoinTokens.Manager }}"
+
+- name: Join other nodes to swarm
+  hosts: swarm_workers
+  become: true
+  vars:
+    swarm_manager_host: "{{ groups['swarm_manager'][0] }}"
+  tasks:
+    - name: Join swarm
+      community.docker.docker_swarm:
+        state: join
+        join_token: "{{ hostvars[swarm_manager_host].swarm_worker_token }}"
+        remote_addrs:
+          - "{{ hostvars[swarm_manager_host].ansible_host }}:2377"
