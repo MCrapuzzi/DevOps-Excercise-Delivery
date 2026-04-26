@@ -9,34 +9,62 @@ provider "proxmox" {
 }
 
 resource "proxmox_vm_qemu" "vm" {
-  count       = 3
+  count       = 1
   name        = "vm-${count.index}"
   target_node = var.target_node
+  clone       = var.template_name
 
-  clone = var.template_name
 
-  memory = 2048
+  agent = 1
+  os_type = "cloud-init"
+  memory = 1024
 
+  # VM specifications
   cpu {
-    cores = 2
+    type = "host"
+    cores = 1
+    sockets = 1
+  }
+
+  # Disk configuration
+  disk {
+    slot = "scsi0"
+    type = "disk"
+    storage = "local-lvm"
+    size = "32G"
+    cache = "writeback"
+    replicate = true
   }
 
   disk {
-    size    = "20G"
-    type    = "disk"
+    slot = "ide2"
+    type = "cloudinit"
     storage = "local-lvm"
-    slot    = "scsi0"
   }
 
+  # Network configuration
   network {
-    model  = "virtio"
+    model = "virtio"
     bridge = "vmbr0"
-    id     = 0
+    id = 0
   }
 
-  os_type = "cloud-init"
-
+  # Cloud-init configuration
   ipconfig0 = "ip=dhcp"
 
+  # Serial interface
+  serial {
+    id = 0
+    type = "socket"
+  }
 
+  # Cloud-init user configuration
+  ciuser = var.pm_ci_user
+  cipassword = var.pm_ci_password
+
+
+  # Boot order
+  boot = "order=scsi0"
+
+  scsihw = "virtio-scsi-pci"
 }
