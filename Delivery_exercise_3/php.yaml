@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-deploy
+  labels:
+    app: php
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: php
+  template:
+    metadata:
+      labels:
+        app: php
+    spec:
+      containers:
+        - name: php
+          image: michelecrapuzzi/php_service
+          ports:
+            - containerPort: 80
+          env:
+            - name: MYSQL_HOST
+              value: mariadb
+            # - name: DB_PORT
+            #   value: "3306"
+            - name: MYSQL_DATABASE
+              value: testDb
+            - name: MYSQL_USER
+              value: admin
+            - name: MYSQL_PASSWORD
+              value: password

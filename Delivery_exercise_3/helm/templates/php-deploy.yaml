@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-deploy
+  labels:
+    app: php
+spec:
+  replicas: {{ .Values.replicaCountPhp }}
+  selector:
+    matchLabels:
+      app: php
+  template:
+    metadata:
+      labels:
+        app: php
+    spec:
+      containers:
+        - name: php
+          image: {{ .Values.php.image }}
+          ports:
+            - containerPort: 80
+          env:
+            - name: MYSQL_HOST
+              value: {{ .Values.mariadb.serviceName | quote }}
+            - name: MYSQL_DATABASE
+              value: {{ .Values.mariadb.database | quote }}
+            - name: MYSQL_USER
+              value: {{ .Values.mariadb.user | quote }}
+            - name: MYSQL_PASSWORD
+              value: {{ .Values.mariadb.password | quote }}
