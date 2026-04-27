@@ -1,0 +1,18 @@
+replicaCount: 1
+replicaCountPhp: 1
+
+mariadb:
+  serviceName: mariadb
+  port: 3306
+  targetPort: 3306
+  image: mariadb:latest
+  database: testDb
+  user: admin
+  password: password
+  rootPassword: password
+
+php:
+  image: michelecrapuzzi/php_service
+  serviceName: php-service
+  port: 80
+  targetPort: 80
