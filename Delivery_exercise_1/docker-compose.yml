@@ -34,8 +34,11 @@ services:
        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     networks:
       - hits-exercise-network
+      
     depends_on:
-      - maria_db
+      maria_db:
+        condition: service_healthy
+      
 
   # nginx_server:
   #    image: nginx:latest
