@@ -2,3 +2,8 @@
 Ansible/*
 JenkinsInstallation/JenkinsDockerRun.bat
 Appunti.txt
+/Delivery_exercise_2/.terraform/
+/Delivery_exercise_2/.terraform.lock.hcl
+/Delivery_exercise_2/terraform.tfstate
+/Delivery_exercise_2/terraform.tfstate.backup
+Delivery_exercise_2/terraform.tfvars
